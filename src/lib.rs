@@ -1,5 +1,6 @@
 pub mod ind_tok;
 mod process_line;
+mod token;
 
 
 
@@ -10,102 +11,103 @@ mod tests {
     pub use ind_tok;
 
 
-    #[test]
-    fn single_line() {
-        let result = ind_tok::tokenize("....").unwrap();
-        assert!(result.len() == 1);
-        assert!(result[0].lines.len() == 1);
-    }
+    //     #[test]
+    //     fn single_line() {
+    //         let result = ind_tok::tokenize("....").unwrap();
+    //         assert!(result.len() == 1);
+    //         assert!(result[0].lines.len() == 1);
+    //     }
 
 
 
-    #[test]
-    fn empty_input() {
-        let result = ind_tok::tokenize("").unwrap();
-        assert!(result.len() == 0);
-    }
+    //     #[test]
+    //     fn empty_input() {
+    //         let result = ind_tok::tokenize("").unwrap();
+    //         assert!(result.len() == 0);
+    //     }
 
 
 
-    #[test]
-    fn empty_lines() {
-        let result = ind_tok::tokenize("
+    //     #[test]
+    //     fn empty_lines() {
+    //         let result = ind_tok::tokenize("
 
-    ")
-            .unwrap();
-        assert!(result.len() == 0);
-
-
-        let result = ind_tok::tokenize("
-            ")
-            .unwrap();
-        assert!(result.len() == 0);
-    }
+    //     ")
+    //             .unwrap();
+    //         assert!(result.len() == 0);
 
 
-
-    #[test]
-    fn some_lines_one_token() {
-        let result = ind_tok::tokenize("....
-....")
-            .unwrap();
-        assert!(result.len() == 1);
-        assert!(result[0].lines.len() == 2);
-
-
-        let result = ind_tok::tokenize("....
-....
-....
-....")
-            .unwrap();
-        assert!(result.len() == 1);
-        assert!(result[0].lines.len() == 4);
-    }
+    //         let result = ind_tok::tokenize("
+    //             ")
+    //             .unwrap();
+    //         assert!(result.len() == 0);
+    //     }
 
 
 
-    #[test]
-    fn some_tokens_root_level_empty_line_separator() {
-        let result = ind_tok::tokenize("1111
-
-2222
-
-3333
-    ")
-            .unwrap();
-        assert!(result.len() == 3);
-        assert!(result[0].lines[0] == "1111");
-        assert!(result[1].lines[0] == "2222");
-        assert!(result[2].lines[0] == "3333");
+    //     #[test]
+    //     fn some_lines_one_token() {
+    //         let result = ind_tok::tokenize("....
+    // ....")
+    //             .unwrap();
+    //         println!("{:?}", result);
+    //         assert!(result.len() == 1);
+    //         assert!(result[0].lines.len() == 2);
 
 
+    //         let result = ind_tok::tokenize("....
+    // ....
+    // ....
+    // ....")
+    //             .unwrap();
+    //         assert!(result.len() == 1);
+    //         assert!(result[0].lines.len() == 4);
+    //     }
 
-        let result = ind_tok::tokenize("00
-01
-02
 
-10
-11
-12
-13
 
-20
-    \
-30
+    //     #[test]
+    //     fn some_tokens_root_level_empty_line_separator() {
+    //         let result = ind_tok::tokenize("1111
 
-    ")
-            .unwrap();
-        assert!(result.len() == 4);
-        assert!(result[0].lines[0] == "00");
-        assert!(result[0].lines[1] == "01");
-        assert!(result[0].lines[2] == "02");
-        assert!(result[1].lines[0] == "10");
-        assert!(result[1].lines[1] == "11");
-        assert!(result[1].lines[2] == "12");
-        assert!(result[1].lines[3] == "13");
-        assert!(result[2].lines[0] == "20");
-        assert!(result[3].lines[0] == "30");
-    }
+    // 2222
+
+    // 3333
+    //     ")
+    //             .unwrap();
+    //         assert!(result.len() == 3);
+    //         assert!(result[0].lines[0] == "1111");
+    //         assert!(result[1].lines[0] == "2222");
+    //         assert!(result[2].lines[0] == "3333");
+
+
+
+    //         let result = ind_tok::tokenize("00
+    // 01
+    // 02
+
+    // 10
+    // 11
+    // 12
+    // 13
+
+    // 20
+    //     \
+    // 30
+
+    //     ")
+    //             .unwrap();
+    //         assert!(result.len() == 4);
+    //         assert!(result[0].lines[0] == "00");
+    //         assert!(result[0].lines[1] == "01");
+    //         assert!(result[0].lines[2] == "02");
+    //         assert!(result[1].lines[0] == "10");
+    //         assert!(result[1].lines[1] == "11");
+    //         assert!(result[1].lines[2] == "12");
+    //         assert!(result[1].lines[3] == "13");
+    //         assert!(result[2].lines[0] == "20");
+    //         assert!(result[3].lines[0] == "30");
+    //     }
 
 
 
@@ -115,27 +117,27 @@ mod tests {
     //     01
     //     02
     // 1
+    //     10
     //     11
-    //     12
     //         120
     //         121
     //         122
     //     13
 
     // 2
-    //     21
+    //     20
 
     // ")
     //             .unwrap();
     //         assert!(result.len() == 3);
-    //         assert!(result[0].lines[0] == "00");
+    //         assert!(result[0].lines[0] == "0");
     //         assert!(result[0].lines[1] == "01");
     //         assert!(result[0].lines[2] == "02");
-    //         assert!(result[1].lines[0] == "10");
-    //         assert!(result[1].lines[1] == "11");
-    //         assert!(result[1].lines[2] == "12");
+    //         assert!(result[1].lines[0] == "1");
+    //         assert!(result[1].lines[1] == "10");
+    //         assert!(result[1].lines[2] == "11");
     //         assert!(result[1].lines[3] == "13");
-    //         assert!(result[2].lines[0] == "20");
-    //         assert!(result[2].lines[1] == "21");
+    //         assert!(result[2].lines[0] == "2");
+    //         assert!(result[2].lines[1] == "20");
     //     }
 }
