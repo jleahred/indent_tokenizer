@@ -36,7 +36,14 @@ use process_line::{LineInfo, process_line};
 // ------------------------------------------------------------------
 //  API
 
-use token::Token;
+#[derive(Debug)]
+pub struct Token {
+    pub lines: Vec<String>,
+    pub tokens: Vec<Token>,
+}
+
+
+
 
 pub fn tokenize(input: &str) -> Result<Vec<Token>, String> {
     let mut parsing_inf = ParsingTokens::new();
@@ -60,6 +67,18 @@ pub fn tokenize(input: &str) -> Result<Vec<Token>, String> {
 
 
 
+impl Token {
+    pub fn new() -> Token {
+        Token {
+            lines: Vec::new(),
+            tokens: Vec::new(),
+        }
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.lines.len() == 0 && self.tokens.len() == 0
+    }
+}
 
 
 

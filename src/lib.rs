@@ -1,6 +1,13 @@
-pub mod ind_tok;
+pub mod impl_token;
 mod process_line;
-mod token;
+
+
+
+#[derive(Debug)]
+pub struct Token {
+    pub lines: Vec<String>,
+    pub tokens: Vec<Token>,
+}
 
 
 
@@ -8,11 +15,11 @@ mod token;
 
 #[cfg(test)]
 mod tests {
-    pub use ind_tok;
+    // pub use add_tokens;
 
 
     //     #[test]
-    //     fn single_line() {
+    //     fn add_first() {
     //         let result = ind_tok::tokenize("....").unwrap();
     //         assert!(result.len() == 1);
     //         assert!(result[0].lines.len() == 1);
