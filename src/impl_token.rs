@@ -144,6 +144,7 @@ use ::Token;
 
 
 
+
 impl Token {
     pub fn new() -> Token {
         Token {
@@ -284,7 +285,6 @@ fn add_two_root_lines() {
         .add_line("A1")
         .add_line("A2")
         .get_tokens_and_close();
-    println!("{:?} _________________", tokens);
     assert!(tokens.len() == 1);
     assert!(tokens[0].lines.len() == 2);
     assert!(tokens[0].lines[0] == "A1");

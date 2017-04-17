@@ -3,9 +3,10 @@ const EOL_CHAR: char = '|';
 
 #[derive(Eq, PartialEq, Debug)]
 pub struct LineInfo {
-    pub indent: u32,
+    pub indent: usize,
     pub content: String,
 }
+
 
 
 pub fn process_line(line: &str) -> Option<LineInfo> {

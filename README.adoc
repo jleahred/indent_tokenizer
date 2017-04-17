@@ -3,6 +3,11 @@
 A small an simple indentation tokenizer
 
 
+== TODO
+
+* Documentation and doc tests
+
+
 == Indentation format
 
 Tabs are no valid on indentation grouping.
@@ -258,4 +263,129 @@ separate tokens
 
 
 == Identation tokenizer API
-pending
+
+Function to call::
+[source, rust]
+----
+pub fn tokenize(input: &str) -> Result<Vec<Token>, Error> 
+----
+
+
+Token type::
+[source, rust]
+----
+#[derive(Debug, PartialEq)]
+pub struct Token {
+    pub lines: Vec<String>,
+    pub tokens: Vec<Token>,
+}
+----
+
+
+Error type::
+[source, rust]
+----
+#[derive(Debug, PartialEq)]
+pub struct Error {
+    pub line: u32,
+    pub desc: String,
+}
+----
+
+
+Thats all
+
+
+Look into lib.rs
+
+
+== Examples
+
+You can look into lib.rs, there are several tests.
+
+
+.Complex example
+[source, rust]
+----
+    let tokens = tokenize("
+0
+    || 01a
+     01b
+     01c
+
+     02a
+     02b
+
+        |020a
+        ||020b
+
+        |  021a
+        |021b
+1a
+1b
+    11a
+   ||11b
+    11c
+
+    12a  ||
+   |12b  ||
+2a
+    21a
+    21b
+   |
+   |
+
+")
+----
+
+The result will be 
+
+[source, rust]
+----
+    vec![Token {
+                lines: vec!["0".to_owned()],
+                tokens: vec![Token {
+                                lines: vec!["| 01a".to_owned(),
+                                            "01b".to_owned(),
+                                            "01c".to_owned()],
+                                tokens: vec![],
+                            },
+                            Token {
+                                lines: vec!["02a".to_owned(), "02b".to_owned()],
+                                tokens: vec![Token {
+                                                lines: vec!["020a".to_owned(),
+                                                            "|020b".to_owned()],
+                                                tokens: vec![],
+                                            },
+                                            Token {
+                                                lines: vec!["  021a".to_owned(),
+                                                            "021b".to_owned()],
+                                                tokens: vec![],
+                                            }],
+                            }],
+            },
+            Token {
+                lines: vec!["1a".to_owned(), "1b".to_owned()],
+                tokens: vec![Token {
+                                lines: vec!["11a".to_owned(),
+                                            "|11b".to_owned(),
+                                            "11c".to_owned()],
+                                tokens: vec![],
+                            },
+                            Token {
+                                lines: vec!["12a  |".to_owned(), "12b  |".to_owned()],
+                                tokens: vec![],
+                            }],
+            },
+            Token {
+                lines: vec!["2a".to_owned()],
+                tokens: vec![Token {
+                                lines: vec!["21a".to_owned(),
+                                            "21b".to_owned(),
+                                            "".to_owned(),
+                                            "".to_owned()],
+                                tokens: vec![],
+                            }],
+            }];
+----
+
