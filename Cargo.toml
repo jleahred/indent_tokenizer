@@ -2,5 +2,12 @@
 name = "indent_tokenizer"
 version = "0.1.0"
 authors = ["jlesteban <jlesteban>"]
+license = "GPL-3.0"
+description = "Generate tokens based on indentation"
+readme = "README.adoc"
+repository = "https://github.com/jleahred/indent_tokenizer"
+keywords = ["indentation", "token", "tokenizer"]
+# documentation=
+
 
 [dependencies]
