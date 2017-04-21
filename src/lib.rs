@@ -13,11 +13,14 @@ use process_line::process_line;
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct LineNum(u32);
 
+#[derive(Debug, PartialEq, Clone, Eq)]
+pub struct SLine(String);
+
 
 
 #[derive(Debug, PartialEq)]
 pub struct Token {
-    pub lines: Vec<String>,
+    pub lines: Vec<SLine>,
     pub tokens: Vec<Token>,
 }
 
@@ -31,7 +34,7 @@ pub fn tokenize(input: &str) -> Result<Vec<Token>, Error> {
     let mut parsing_lines = ParsingLines::new();
 
     for l in input.lines() {
-        parsing_lines.add_opt_line(&process_line(l))?;
+        parsing_lines.add_opt_line(&process_line(&SLine::from(l)))?;
     }
 
     Ok(parsing_lines.add_tokens
@@ -49,4 +52,14 @@ pub fn tokenize(input: &str) -> Result<Vec<Token>, Error> {
 pub struct TokenLevel(usize);
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
-pub struct Spaces(usize);
+pub struct NSpaces(usize);
+
+
+impl SLine {
+    pub fn new() -> Self {
+        SLine(String::new())
+    }
+    pub fn from(s: &str) -> Self {
+        SLine(String::from(s))
+    }
+}

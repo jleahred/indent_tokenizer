@@ -2,9 +2,12 @@ const INDENT_CHAR: char = '|';
 const EOL_CHAR: char = '|';
 
 
-use Spaces;
+use NSpaces;
+use SLine;
 
-impl Spaces {
+
+
+impl NSpaces {
     fn inc(&mut self) -> &Self {
         self.0 += 1;
         self
@@ -14,17 +17,17 @@ impl Spaces {
 
 #[derive(Eq, PartialEq, Debug)]
 pub struct LineInfo {
-    pub indent: Spaces,
-    pub content: String,
+    pub indent: NSpaces,
+    pub content: SLine,
 }
 
 
 
-pub fn process_line(line: &str) -> Option<LineInfo> {
-    let mut indent = Spaces(0);
-    let mut lresult = String::new();
+pub fn process_line(line: &SLine) -> Option<LineInfo> {
+    let mut indent = NSpaces(0);
+    let mut lresult = SLine::new();
     let mut located_start_indent = false;
-    for c in line.chars() {
+    for c in line.0.chars() {
         if located_start_indent == false {
             if c == ' ' {
                 indent.inc();
@@ -33,17 +36,17 @@ pub fn process_line(line: &str) -> Option<LineInfo> {
                 located_start_indent = true;
             } else {
                 located_start_indent = true;
-                lresult.push(c);
+                lresult.0.push(c);
             }
         } else {
-            lresult.push(c);
+            lresult.0.push(c);
         }
     }
-    if lresult.is_empty() && !located_start_indent {
+    if lresult.0.is_empty() && !located_start_indent {
         None
     } else {
-        if lresult.chars().last() == Some(EOL_CHAR) {
-            lresult.pop();
+        if lresult.0.chars().last() == Some(EOL_CHAR) {
+            lresult.0.pop();
         }
 
         Some(LineInfo {
@@ -56,80 +59,80 @@ pub fn process_line(line: &str) -> Option<LineInfo> {
 #[test]
 fn test_process_line() {
     //  simple -------------------------------------------
-    assert!(process_line(&"    abcdef".to_string()) ==
+    assert!(process_line(&SLine("    abcdef".to_owned())) ==
             Some(LineInfo {
-        indent: Spaces(4),
-        content: "abcdef".to_string(),
+        indent: NSpaces(4),
+        content: SLine::from("abcdef"),
     }));
 
-    assert!(process_line(&" abcdef".to_string()) ==
+    assert!(process_line(&SLine::from(" abcdef")) ==
             Some(LineInfo {
-        indent: Spaces(1),
-        content: "abcdef".to_string(),
+        indent: NSpaces(1),
+        content: SLine::from("abcdef"),
     }));
 
     //  empty line --------------------------------------
-    assert!(process_line(&"".to_string()) == None);
+    assert!(process_line(&SLine::from("")) == None);
 
-    assert!(process_line(&"  ".to_string()) == None);
+    assert!(process_line(&SLine::from("  ")) == None);
 
 
     //  not indented-------------------------------------
-    assert!(process_line(&"abcdef".to_string()) ==
+    assert!(process_line(&SLine::from("abcdef")) ==
             Some(LineInfo {
-        indent: Spaces(0),
-        content: "abcdef".to_string(),
+        indent: NSpaces(0),
+        content: SLine::from("abcdef"),
     }));
 
     //  indentation indicator ---------------------------
-    assert!(process_line(&"   |abcdef".to_string()) ==
+    assert!(process_line(&SLine::from("   |abcdef")) ==
             Some(LineInfo {
-        indent: Spaces(4),
-        content: "abcdef".to_string(),
+        indent: NSpaces(4),
+        content: SLine::from("abcdef"),
     }));
 
-    assert!(process_line(&"|abcdef".to_string()) ==
+    assert!(process_line(&SLine::from("|abcdef")) ==
             Some(LineInfo {
-        indent: Spaces(1),
-        content: "abcdef".to_string(),
+        indent: NSpaces(1),
+        content: SLine::from("abcdef"),
     }));
 
-    assert!(process_line(&"   |".to_string()) ==
+    assert!(process_line(&SLine::from("   |")) ==
             Some(LineInfo {
-        indent: Spaces(4),
-        content: "".to_string(),
+        indent: NSpaces(4),
+        content: SLine::from(""),
     }));
 
-    assert!(process_line(&"|abcdef".to_string()) ==
+    assert!(process_line(&SLine::from("|abcdef")) ==
             Some(LineInfo {
-        indent: Spaces(1),
-        content: "abcdef".to_string(),
+        indent: NSpaces(1),
+        content: SLine::from("abcdef"),
     }));
 
-    //  spaces at end of line ---------------------------
-    assert!(process_line(&"    abcdef  ".to_string()) ==
+    //  NSpaces at end of line ---------------------------
+    assert!(process_line(&SLine::from("    abcdef  ")) ==
             Some(LineInfo {
-        indent: Spaces(4),
-        content: "abcdef  ".to_string(),
+        indent: NSpaces(4),
+        content: SLine::from("abcdef  "),
     }));
 
-    assert!(process_line(&"    abcdef  |".to_string()) ==
+    assert!(process_line(&SLine::from("    abcdef  |")) ==
             Some(LineInfo {
-        indent: Spaces(4),
-        content: "abcdef  ".to_string(),
+        indent: NSpaces(4),
+        content: SLine::from("abcdef  "),
     }));
 
-    assert!(process_line(&"   |  |".to_string()) ==
+    assert!(process_line(&SLine::from("   |  |")) ==
             Some(LineInfo {
-        indent: Spaces(4),
-        content: "  ".to_string(),
+        indent: NSpaces(4),
+        content: SLine::from("  "),
     }));
 
     //  pipe end of line ---------------------------
-    assert!(process_line(&"    abcdef  ||".to_string()) ==
+    assert!(process_line(&SLine::from("    abcdef  ||")) ==
             Some(LineInfo {
-        indent: Spaces(4),
-        content: "abcdef  |".to_string(),
+        indent: NSpaces(4),
+        content: SLine::from("abcdef  |"),
     }));
 
 }

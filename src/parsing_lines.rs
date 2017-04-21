@@ -1,10 +1,8 @@
 use process_line::LineInfo;
 use impl_token::AddTokens;
 
-use Error;
-use LineNum;
-use TokenLevel;
-use Spaces;
+use {Error, LineNum, TokenLevel, NSpaces, SLine};
+
 
 
 
@@ -19,7 +17,7 @@ impl LineNum {
 #[derive(Debug)]
 pub struct ParsingLines {
     line_counter: LineNum,
-    prev_indent_spaces: Vec<Spaces>,
+    prev_indent_spaces: Vec<NSpaces>,
     pub add_tokens: AddTokens,
 }
 
@@ -77,7 +75,7 @@ impl ParsingLines {
         self.add_line(&line.content)
     }
 
-    fn add_line(&mut self, content: &str) -> &Self {
+    fn add_line(&mut self, content: &SLine) -> &Self {
         //  no index modif
         self.add_tokens
             .add_line(content);
@@ -100,7 +98,7 @@ impl ParsingLines {
         Ok(self)
     }
 
-    fn get_back_level_update_prevs(&mut self, spaces: Spaces) -> Result<TokenLevel, Error> {
+    fn get_back_level_update_prevs(&mut self, spaces: NSpaces) -> Result<TokenLevel, Error> {
         fn get_error(line_counter: LineNum) -> Error {
             Error {
                 line: line_counter,

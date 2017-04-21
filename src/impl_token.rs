@@ -140,8 +140,8 @@
 
 
 
-use Token;
-use TokenLevel;
+use {Token, TokenLevel, SLine};
+
 
 
 impl TokenLevel {
@@ -209,7 +209,7 @@ impl AddTokens {
         }
     }
 
-    pub fn add_line(&mut self, line: &str) -> &mut Self {
+    pub fn add_line(&mut self, line: &SLine) -> &mut Self {
         self.new_token.lines.push(line.to_owned());
         self
     }
@@ -276,11 +276,11 @@ fn init() {
 #[test]
 fn add_first_line() {
     let tokens = AddTokens::new()
-        .add_line("A1")
+        .add_line(&SLine::from("A1"))
         .get_tokens_and_close();
     assert!(tokens.len() == 1);
     assert!(tokens[0].lines.len() == 1);
-    assert!(tokens[0].lines[0] == "A1");
+    assert!(tokens[0].lines[0] == SLine::from("A1"));
 }
 
 
@@ -291,13 +291,13 @@ fn add_first_line() {
 #[test]
 fn add_two_root_lines() {
     let tokens = AddTokens::new()
-        .add_line("A1")
-        .add_line("A2")
+        .add_line(&SLine::from("A1"))
+        .add_line(&SLine::from("A2"))
         .get_tokens_and_close();
     assert!(tokens.len() == 1);
     assert!(tokens[0].lines.len() == 2);
-    assert!(tokens[0].lines[0] == "A1");
-    assert!(tokens[0].lines[1] == "A2");
+    assert!(tokens[0].lines[0] == SLine::from("A1"));
+    assert!(tokens[0].lines[1] == SLine::from("A2"));
 }
 
 
@@ -310,14 +310,14 @@ fn add_two_root_lines() {
 #[test]
 fn add_two_root_lines_and_token() {
     let tokens = AddTokens::new()
-        .add_line("A1")
-        .add_line("A2")
+        .add_line(&SLine::from("A1"))
+        .add_line(&SLine::from("A2"))
         .add_token()
         .get_tokens_and_close();
     assert!(tokens.len() == 1);
     assert!(tokens[0].lines.len() == 2);
-    assert!(tokens[0].lines[0] == "A1");
-    assert!(tokens[0].lines[1] == "A2");
+    assert!(tokens[0].lines[0] == SLine::from("A1"));
+    assert!(tokens[0].lines[1] == SLine::from("A2"));
 }
 
 
@@ -332,17 +332,17 @@ fn add_two_root_lines_and_token() {
 #[test]
 fn add_token_root() {
     let tokens = AddTokens::new()
-        .add_line("A1")
-        .add_line("A2")
+        .add_line(&SLine::from("A1"))
+        .add_line(&SLine::from("A2"))
         .add_token()
-        .add_line("B1")
+        .add_line(&SLine::from("B1"))
         .get_tokens_and_close();
     assert!(tokens.len() == 2);
     assert!(tokens[0].lines.len() == 2);
-    assert!(tokens[0].lines[0] == "A1");
-    assert!(tokens[0].lines[1] == "A2");
+    assert!(tokens[0].lines[0] == SLine::from("A1"));
+    assert!(tokens[0].lines[1] == SLine::from("A2"));
     assert!(tokens[1].lines.len() == 1);
-    assert!(tokens[1].lines[0] == "B1");
+    assert!(tokens[1].lines[0] == SLine::from("B1"));
 }
 
 
@@ -358,21 +358,21 @@ fn add_token_root() {
 #[test]
 fn add_token_root_aditional_lines() {
     let tokens = AddTokens::new()
-        .add_line("A1")
-        .add_line("A2")
+        .add_line(&SLine::from("A1"))
+        .add_line(&SLine::from("A2"))
         .add_token()
-        .add_line("B1")
-        .add_line("B2")
-        .add_line("B3")
+        .add_line(&SLine::from("B1"))
+        .add_line(&SLine::from("B2"))
+        .add_line(&SLine::from("B3"))
         .get_tokens_and_close();
     assert!(tokens.len() == 2);
     assert!(tokens[0].lines.len() == 2);
-    assert!(tokens[0].lines[0] == "A1");
-    assert!(tokens[0].lines[1] == "A2");
+    assert!(tokens[0].lines[0] == SLine::from("A1"));
+    assert!(tokens[0].lines[1] == SLine::from("A2"));
     assert!(tokens[1].lines.len() == 3);
-    assert!(tokens[1].lines[0] == "B1");
-    assert!(tokens[1].lines[1] == "B2");
-    assert!(tokens[1].lines[2] == "B3");
+    assert!(tokens[1].lines[0] == SLine::from("B1"));
+    assert!(tokens[1].lines[1] == SLine::from("B2"));
+    assert!(tokens[1].lines[2] == SLine::from("B3"));
 }
 
 
@@ -395,31 +395,31 @@ fn add_token_root_aditional_lines() {
 #[test]
 fn add_sub_token() {
     let tokens = AddTokens::new()
-        .add_line("A1")
-        .add_line("A2")
+        .add_line(&SLine::from("A1"))
+        .add_line(&SLine::from("A2"))
         .add_token()
-        .add_line("B1")
-        .add_line("B2")
-        .add_line("B3")
+        .add_line(&SLine::from("B1"))
+        .add_line(&SLine::from("B2"))
+        .add_line(&SLine::from("B3"))
         .add_sub_token()
-        .add_line("BA1")
-        .add_line("BA2")
-        .add_line("BA3")
-        .add_line("BA4")
+        .add_line(&SLine::from("BA1"))
+        .add_line(&SLine::from("BA2"))
+        .add_line(&SLine::from("BA3"))
+        .add_line(&SLine::from("BA4"))
         .get_tokens_and_close();
     assert!(tokens.len() == 2);
     assert!(tokens[0].lines.len() == 2);
-    assert!(tokens[0].lines[0] == "A1");
-    assert!(tokens[0].lines[1] == "A2");
+    assert!(tokens[0].lines[0] == SLine::from("A1"));
+    assert!(tokens[0].lines[1] == SLine::from("A2"));
     assert!(tokens[1].lines.len() == 3);
-    assert!(tokens[1].lines[0] == "B1");
-    assert!(tokens[1].lines[1] == "B2");
-    assert!(tokens[1].lines[2] == "B3");
+    assert!(tokens[1].lines[0] == SLine::from("B1"));
+    assert!(tokens[1].lines[1] == SLine::from("B2"));
+    assert!(tokens[1].lines[2] == SLine::from("B3"));
     assert!(tokens[1].tokens[0].lines.len() == 4);
-    assert!(tokens[1].tokens[0].lines[0] == "BA1");
-    assert!(tokens[1].tokens[0].lines[1] == "BA2");
-    assert!(tokens[1].tokens[0].lines[2] == "BA3");
-    assert!(tokens[1].tokens[0].lines[3] == "BA4");
+    assert!(tokens[1].tokens[0].lines[0] == SLine::from("BA1"));
+    assert!(tokens[1].tokens[0].lines[1] == SLine::from("BA2"));
+    assert!(tokens[1].tokens[0].lines[2] == SLine::from("BA3"));
+    assert!(tokens[1].tokens[0].lines[3] == SLine::from("BA4"));
 }
 
 
@@ -449,40 +449,40 @@ fn add_sub_token() {
 #[test]
 fn add_sub_sub_token() {
     let tokens = AddTokens::new()
-        .add_line("A1")
-        .add_line("A2")
+        .add_line(&SLine::from("A1"))
+        .add_line(&SLine::from("A2"))
         .add_token()
-        .add_line("B1")
-        .add_line("B2")
-        .add_line("B3")
+        .add_line(&SLine::from("B1"))
+        .add_line(&SLine::from("B2"))
+        .add_line(&SLine::from("B3"))
         .add_sub_token()
-        .add_line("BA1")
-        .add_line("BA2")
-        .add_line("BA3")
-        .add_line("BA4")
+        .add_line(&SLine::from("BA1"))
+        .add_line(&SLine::from("BA2"))
+        .add_line(&SLine::from("BA3"))
+        .add_line(&SLine::from("BA4"))
         .add_sub_token()
-        .add_line("BAA1")
-        .add_line("BAA2")
+        .add_line(&SLine::from("BAA1"))
+        .add_line(&SLine::from("BAA2"))
         .get_tokens_and_close();
     assert!(tokens.len() == 2);
     assert!(tokens[0].lines.len() == 2);
-    assert!(tokens[0].lines[0] == "A1");
-    assert!(tokens[0].lines[1] == "A2");
+    assert!(tokens[0].lines[0] == SLine::from("A1"));
+    assert!(tokens[0].lines[1] == SLine::from("A2"));
     assert!(tokens[1].lines.len() == 3);
-    assert!(tokens[1].lines[0] == "B1");
-    assert!(tokens[1].lines[1] == "B2");
-    assert!(tokens[1].lines[2] == "B3");
+    assert!(tokens[1].lines[0] == SLine::from("B1"));
+    assert!(tokens[1].lines[1] == SLine::from("B2"));
+    assert!(tokens[1].lines[2] == SLine::from("B3"));
     assert!(tokens[1].tokens.len() == 1);
     assert!(tokens[1].tokens[0].lines.len() == 4);
-    assert!(tokens[1].tokens[0].lines[0] == "BA1");
-    assert!(tokens[1].tokens[0].lines[1] == "BA2");
-    assert!(tokens[1].tokens[0].lines[2] == "BA3");
-    assert!(tokens[1].tokens[0].lines[3] == "BA4");
+    assert!(tokens[1].tokens[0].lines[0] == SLine::from("BA1"));
+    assert!(tokens[1].tokens[0].lines[1] == SLine::from("BA2"));
+    assert!(tokens[1].tokens[0].lines[2] == SLine::from("BA3"));
+    assert!(tokens[1].tokens[0].lines[3] == SLine::from("BA4"));
     assert!(tokens[1].tokens[0].tokens.len() == 1);
     assert!(tokens[1].tokens[0].tokens.len() == 1);
     assert!(tokens[1].tokens[0].tokens[0].lines.len() == 2);
-    assert!(tokens[1].tokens[0].tokens[0].lines[0] == "BAA1");
-    assert!(tokens[1].tokens[0].tokens[0].lines[1] == "BAA2");
+    assert!(tokens[1].tokens[0].tokens[0].lines[0] == SLine::from("BAA1"));
+    assert!(tokens[1].tokens[0].tokens[0].lines[1] == SLine::from("BAA2"));
 }
 
 
@@ -522,55 +522,55 @@ fn add_sub_sub_token() {
 #[test]
 fn add_sub_sub_sub_token() {
     let tokens = AddTokens::new()
-        .add_line("A1")
-        .add_line("A2")
+        .add_line(&SLine::from("A1"))
+        .add_line(&SLine::from("A2"))
         .add_token()
-        .add_line("B1")
-        .add_line("B2")
-        .add_line("B3")
+        .add_line(&SLine::from("B1"))
+        .add_line(&SLine::from("B2"))
+        .add_line(&SLine::from("B3"))
         .add_sub_token()
-        .add_line("BA1")
-        .add_line("BA2")
-        .add_line("BA3")
-        .add_line("BA4")
+        .add_line(&SLine::from("BA1"))
+        .add_line(&SLine::from("BA2"))
+        .add_line(&SLine::from("BA3"))
+        .add_line(&SLine::from("BA4"))
         .add_sub_token()
-        .add_line("BAA1")
-        .add_line("BAA2")
+        .add_line(&SLine::from("BAA1"))
+        .add_line(&SLine::from("BAA2"))
         .add_token()
-        .add_line("BAB1")
-        .add_line("BAB2")
+        .add_line(&SLine::from("BAB1"))
+        .add_line(&SLine::from("BAB2"))
         .add_sub_token()
-        .add_line("BABA1")
-        .add_line("BABA2")
-        .add_line("BABA3")
+        .add_line(&SLine::from("BABA1"))
+        .add_line(&SLine::from("BABA2"))
+        .add_line(&SLine::from("BABA3"))
         .get_tokens_and_close();
     assert!(tokens.len() == 2);
     assert!(tokens[0].lines.len() == 2);
-    assert!(tokens[0].lines[0] == "A1");
-    assert!(tokens[0].lines[1] == "A2");
+    assert!(tokens[0].lines[0] == SLine::from("A1"));
+    assert!(tokens[0].lines[1] == SLine::from("A2"));
     assert!(tokens[1].lines.len() == 3);
-    assert!(tokens[1].lines[0] == "B1");
-    assert!(tokens[1].lines[1] == "B2");
-    assert!(tokens[1].lines[2] == "B3");
+    assert!(tokens[1].lines[0] == SLine::from("B1"));
+    assert!(tokens[1].lines[1] == SLine::from("B2"));
+    assert!(tokens[1].lines[2] == SLine::from("B3"));
     assert!(tokens[1].tokens.len() == 1);
     assert!(tokens[1].tokens[0].lines.len() == 4);
-    assert!(tokens[1].tokens[0].lines[0] == "BA1");
-    assert!(tokens[1].tokens[0].lines[1] == "BA2");
-    assert!(tokens[1].tokens[0].lines[2] == "BA3");
-    assert!(tokens[1].tokens[0].lines[3] == "BA4");
+    assert!(tokens[1].tokens[0].lines[0] == SLine::from("BA1"));
+    assert!(tokens[1].tokens[0].lines[1] == SLine::from("BA2"));
+    assert!(tokens[1].tokens[0].lines[2] == SLine::from("BA3"));
+    assert!(tokens[1].tokens[0].lines[3] == SLine::from("BA4"));
     assert!(tokens[1].tokens[0].tokens.len() == 2);
     assert!(tokens[1].tokens[0].tokens[0].lines.len() == 2);
-    assert!(tokens[1].tokens[0].tokens[0].lines[0] == "BAA1");
-    assert!(tokens[1].tokens[0].tokens[0].lines[1] == "BAA2");
+    assert!(tokens[1].tokens[0].tokens[0].lines[0] == SLine::from("BAA1"));
+    assert!(tokens[1].tokens[0].tokens[0].lines[1] == SLine::from("BAA2"));
     assert!(tokens[1].tokens[0].tokens[1].lines.len() == 2);
-    assert!(tokens[1].tokens[0].tokens[1].lines[0] == "BAB1");
-    assert!(tokens[1].tokens[0].tokens[1].lines[1] == "BAB2");
+    assert!(tokens[1].tokens[0].tokens[1].lines[0] == SLine::from("BAB1"));
+    assert!(tokens[1].tokens[0].tokens[1].lines[1] == SLine::from("BAB2"));
 
     assert!(tokens[1].tokens[0].tokens[1].tokens.len() == 1);
     assert!(tokens[1].tokens[0].tokens[1].tokens[0].lines.len() == 3);
-    assert!(tokens[1].tokens[0].tokens[1].tokens[0].lines[0] == "BABA1");
-    assert!(tokens[1].tokens[0].tokens[1].tokens[0].lines[1] == "BABA2");
-    assert!(tokens[1].tokens[0].tokens[1].tokens[0].lines[2] == "BABA3");
+    assert!(tokens[1].tokens[0].tokens[1].tokens[0].lines[0] == SLine::from("BABA1"));
+    assert!(tokens[1].tokens[0].tokens[1].tokens[0].lines[1] == SLine::from("BABA2"));
+    assert!(tokens[1].tokens[0].tokens[1].tokens[0].lines[2] == SLine::from("BABA3"));
 }
 
 
@@ -616,30 +616,30 @@ fn add_sub_sub_sub_token() {
 fn add_back_token() {
     let gen_tokens = || -> Result<Vec<Token>, String> {
         Ok(AddTokens::new()
-            .add_line("A1")
-            .add_line("A2")
+            .add_line(&SLine::from("A1"))
+            .add_line(&SLine::from("A2"))
             .add_token()
-            .add_line("B1")
-            .add_line("B2")
-            .add_line("B3")
+            .add_line(&SLine::from("B1"))
+            .add_line(&SLine::from("B2"))
+            .add_line(&SLine::from("B3"))
             .add_sub_token()
-            .add_line("BA1")
-            .add_line("BA2")
-            .add_line("BA3")
-            .add_line("BA4")
+            .add_line(&SLine::from("BA1"))
+            .add_line(&SLine::from("BA2"))
+            .add_line(&SLine::from("BA3"))
+            .add_line(&SLine::from("BA4"))
             .add_sub_token()
-            .add_line("BAA1")
-            .add_line("BAA2")
+            .add_line(&SLine::from("BAA1"))
+            .add_line(&SLine::from("BAA2"))
             .add_token()
-            .add_line("BAB1")
-            .add_line("BAB2")
+            .add_line(&SLine::from("BAB1"))
+            .add_line(&SLine::from("BAB2"))
             .add_sub_token()
-            .add_line("BABA1")
-            .add_line("BABA2")
-            .add_line("BABA3")
+            .add_line(&SLine::from("BABA1"))
+            .add_line(&SLine::from("BABA2"))
+            .add_line(&SLine::from("BABA3"))
             .add_back_token(TokenLevel(1))
-            .add_line("BB1")
-            .add_line("BB2")
+            .add_line(&SLine::from("BB1"))
+            .add_line(&SLine::from("BB2"))
             .get_tokens_and_close())
     };
 
@@ -648,36 +648,36 @@ fn add_back_token() {
     assert!(tokens.len() == 2);
     assert!(tokens[0].tokens.len() == 0);
     assert!(tokens[0].lines.len() == 2);
-    assert!(tokens[0].lines[0] == "A1");
-    assert!(tokens[0].lines[1] == "A2");
+    assert!(tokens[0].lines[0] == SLine::from("A1"));
+    assert!(tokens[0].lines[1] == SLine::from("A2"));
     assert!(tokens[1].lines.len() == 3);
-    assert!(tokens[1].lines[0] == "B1");
-    assert!(tokens[1].lines[1] == "B2");
-    assert!(tokens[1].lines[2] == "B3");
+    assert!(tokens[1].lines[0] == SLine::from("B1"));
+    assert!(tokens[1].lines[1] == SLine::from("B2"));
+    assert!(tokens[1].lines[2] == SLine::from("B3"));
 
     assert!(tokens[1].tokens.len() == 2);
 
     assert!(tokens[1].tokens[0].lines.len() == 4);
-    assert!(tokens[1].tokens[0].lines[0] == "BA1");
-    assert!(tokens[1].tokens[0].lines[1] == "BA2");
-    assert!(tokens[1].tokens[0].lines[2] == "BA3");
-    assert!(tokens[1].tokens[0].lines[3] == "BA4");
+    assert!(tokens[1].tokens[0].lines[0] == SLine::from("BA1"));
+    assert!(tokens[1].tokens[0].lines[1] == SLine::from("BA2"));
+    assert!(tokens[1].tokens[0].lines[2] == SLine::from("BA3"));
+    assert!(tokens[1].tokens[0].lines[3] == SLine::from("BA4"));
     assert!(tokens[1].tokens[0].tokens.len() == 2);
     assert!(tokens[1].tokens[0].tokens[0].tokens.len() == 0);
     assert!(tokens[1].tokens[0].tokens[0].lines.len() == 2);
-    assert!(tokens[1].tokens[0].tokens[0].lines[0] == "BAA1");
-    assert!(tokens[1].tokens[0].tokens[0].lines[1] == "BAA2");
+    assert!(tokens[1].tokens[0].tokens[0].lines[0] == SLine::from("BAA1"));
+    assert!(tokens[1].tokens[0].tokens[0].lines[1] == SLine::from("BAA2"));
     assert!(tokens[1].tokens[0].tokens[1].lines.len() == 2);
-    assert!(tokens[1].tokens[0].tokens[1].lines[0] == "BAB1");
-    assert!(tokens[1].tokens[0].tokens[1].lines[1] == "BAB2");
+    assert!(tokens[1].tokens[0].tokens[1].lines[0] == SLine::from("BAB1"));
+    assert!(tokens[1].tokens[0].tokens[1].lines[1] == SLine::from("BAB2"));
     assert!(tokens[1].tokens[0].tokens[1].tokens.len() == 1);
     assert!(tokens[1].tokens[0].tokens[1].tokens[0].tokens.len() == 0);
     assert!(tokens[1].tokens[0].tokens[1].tokens[0].lines.len() == 3);
-    assert!(tokens[1].tokens[0].tokens[1].tokens[0].lines[0] == "BABA1");
-    assert!(tokens[1].tokens[0].tokens[1].tokens[0].lines[1] == "BABA2");
-    assert!(tokens[1].tokens[0].tokens[1].tokens[0].lines[2] == "BABA3");
+    assert!(tokens[1].tokens[0].tokens[1].tokens[0].lines[0] == SLine::from("BABA1"));
+    assert!(tokens[1].tokens[0].tokens[1].tokens[0].lines[1] == SLine::from("BABA2"));
+    assert!(tokens[1].tokens[0].tokens[1].tokens[0].lines[2] == SLine::from("BABA3"));
 
     assert!(tokens[1].tokens[1].lines.len() == 2);
-    assert!(tokens[1].tokens[1].lines[0] == "BB1");
-    assert!(tokens[1].tokens[1].lines[1] == "BB2");
+    assert!(tokens[1].tokens[1].lines[0] == SLine::from("BB1"));
+    assert!(tokens[1].tokens[1].lines[1] == SLine::from("BB2"));
 }

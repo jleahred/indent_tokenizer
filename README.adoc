@@ -5,8 +5,14 @@ A small an simple indentation tokenizer
 
 == TODO
 
+* Update README
+    ** Versión 0.2 removed generic types
 * Documentation and doc tests
 
+
+== Modifs
+
+0.2.0:: Removed generic types
 
 == Indentation format
 
