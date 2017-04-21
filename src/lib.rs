@@ -10,6 +10,11 @@ use process_line::process_line;
 // ------------------------------------------------------------------
 //  API
 
+#[derive(Debug, PartialEq, Copy, Clone)]
+pub struct LineNum(u32);
+
+
+
 #[derive(Debug, PartialEq)]
 pub struct Token {
     pub lines: Vec<String>,
@@ -18,7 +23,7 @@ pub struct Token {
 
 #[derive(Debug, PartialEq)]
 pub struct Error {
-    pub line: u32,
+    pub line: LineNum,
     pub desc: String,
 }
 
@@ -36,3 +41,12 @@ pub fn tokenize(input: &str) -> Result<Vec<Token>, Error> {
 //  API
 // ------------------------------------------------------------------
 // ------------------------------------------------------------------
+
+
+
+// todo:  pub(crate) when possible
+#[derive(Debug, PartialEq, Copy, Clone)]
+pub struct TokenLevel(usize);
+
+#[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
+pub struct Spaces(usize);

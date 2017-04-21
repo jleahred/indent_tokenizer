@@ -1,24 +1,35 @@
 const INDENT_CHAR: char = '|';
 const EOL_CHAR: char = '|';
 
+
+use Spaces;
+
+impl Spaces {
+    fn inc(&mut self) -> &Self {
+        self.0 += 1;
+        self
+    }
+}
+
+
 #[derive(Eq, PartialEq, Debug)]
 pub struct LineInfo {
-    pub indent: usize,
+    pub indent: Spaces,
     pub content: String,
 }
 
 
 
 pub fn process_line(line: &str) -> Option<LineInfo> {
-    let mut indent = 0;
+    let mut indent = Spaces(0);
     let mut lresult = String::new();
     let mut located_start_indent = false;
     for c in line.chars() {
         if located_start_indent == false {
             if c == ' ' {
-                indent += 1;
+                indent.inc();
             } else if c == INDENT_CHAR {
-                indent += 1;
+                indent.inc();
                 located_start_indent = true;
             } else {
                 located_start_indent = true;
@@ -47,13 +58,13 @@ fn test_process_line() {
     //  simple -------------------------------------------
     assert!(process_line(&"    abcdef".to_string()) ==
             Some(LineInfo {
-        indent: 4,
+        indent: Spaces(4),
         content: "abcdef".to_string(),
     }));
 
     assert!(process_line(&" abcdef".to_string()) ==
             Some(LineInfo {
-        indent: 1,
+        indent: Spaces(1),
         content: "abcdef".to_string(),
     }));
 
@@ -66,58 +77,58 @@ fn test_process_line() {
     //  not indented-------------------------------------
     assert!(process_line(&"abcdef".to_string()) ==
             Some(LineInfo {
-        indent: 0,
+        indent: Spaces(0),
         content: "abcdef".to_string(),
     }));
 
     //  indentation indicator ---------------------------
     assert!(process_line(&"   |abcdef".to_string()) ==
             Some(LineInfo {
-        indent: 4,
+        indent: Spaces(4),
         content: "abcdef".to_string(),
     }));
 
     assert!(process_line(&"|abcdef".to_string()) ==
             Some(LineInfo {
-        indent: 1,
+        indent: Spaces(1),
         content: "abcdef".to_string(),
     }));
 
     assert!(process_line(&"   |".to_string()) ==
             Some(LineInfo {
-        indent: 4,
+        indent: Spaces(4),
         content: "".to_string(),
     }));
 
     assert!(process_line(&"|abcdef".to_string()) ==
             Some(LineInfo {
-        indent: 1,
+        indent: Spaces(1),
         content: "abcdef".to_string(),
     }));
 
     //  spaces at end of line ---------------------------
     assert!(process_line(&"    abcdef  ".to_string()) ==
             Some(LineInfo {
-        indent: 4,
+        indent: Spaces(4),
         content: "abcdef  ".to_string(),
     }));
 
     assert!(process_line(&"    abcdef  |".to_string()) ==
             Some(LineInfo {
-        indent: 4,
+        indent: Spaces(4),
         content: "abcdef  ".to_string(),
     }));
 
     assert!(process_line(&"   |  |".to_string()) ==
             Some(LineInfo {
-        indent: 4,
+        indent: Spaces(4),
         content: "  ".to_string(),
     }));
 
     //  pipe end of line ---------------------------
     assert!(process_line(&"    abcdef  ||".to_string()) ==
             Some(LineInfo {
-        indent: 4,
+        indent: Spaces(4),
         content: "abcdef  |".to_string(),
     }));
 

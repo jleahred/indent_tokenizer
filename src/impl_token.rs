@@ -140,9 +140,18 @@
 
 
 
-use ::Token;
+use Token;
+use TokenLevel;
 
 
+impl TokenLevel {
+    fn next(&self) -> Self {
+        TokenLevel(self.0 + 1)
+    }
+    fn prev(&self) -> Self {
+        TokenLevel(self.0 - 1)
+    }
+}
 
 
 impl Token {
@@ -170,15 +179,15 @@ impl Token {
         self
     }
 
-    fn get_token_level(&mut self, level: usize) -> &mut Self {
+    fn get_token_level(&mut self, level: TokenLevel) -> &mut Self {
         let len = self.tokens.len();
-        match level {
+        match level.0 {
             0 => self,
             _ => {
                 if self.tokens.len() == 0 {
                     self.tokens.push(Token::new());
                 };
-                (&mut self.tokens[len - 1]).get_token_level(level - 1)
+                (&mut self.tokens[len - 1]).get_token_level(level.prev())
             }
         }
     }
@@ -187,7 +196,7 @@ impl Token {
 #[derive(Debug)]
 pub struct AddTokens {
     new_token: Token, //  last created token, pending insert in proper possition
-    nt_level: usize, //  nt will be inserted allways at end. We only need the level
+    nt_level: TokenLevel, //  nt will be inserted allways at end. We only need the level
     root_token: Token, //  Tokens inserted and closed
 }
 
@@ -195,7 +204,7 @@ impl AddTokens {
     pub fn new() -> Self {
         AddTokens {
             new_token: Token::new(),
-            nt_level: 0,
+            nt_level: TokenLevel(0),
             root_token: Token::new(),
         }
     }
@@ -218,11 +227,11 @@ impl AddTokens {
 
     pub fn add_sub_token(&mut self) -> &mut Self {
         self.add_token();   //  consolidate token
-        self.nt_level += 1;
+        self.nt_level = self.nt_level.next();
         self
     }
 
-    pub fn add_back_token(&mut self, level: usize) -> &mut Self {
+    pub fn add_back_token(&mut self, level: TokenLevel) -> &mut Self {
         self.add_token();   //  consolidate token
         self.nt_level = level;
         self
@@ -628,7 +637,7 @@ fn add_back_token() {
             .add_line("BABA1")
             .add_line("BABA2")
             .add_line("BABA3")
-            .add_back_token(1)
+            .add_back_token(TokenLevel(1))
             .add_line("BB1")
             .add_line("BB2")
             .get_tokens_and_close())

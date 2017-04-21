@@ -1,28 +1,39 @@
 use process_line::LineInfo;
 use impl_token::AddTokens;
 
-use ::Error;
+use Error;
+use LineNum;
+use TokenLevel;
+use Spaces;
+
+
+
+impl LineNum {
+    fn inc(&self) -> Self {
+        LineNum(self.0 + 1)
+    }
+}
 
 
 
 #[derive(Debug)]
 pub struct ParsingLines {
-    line_counter: u32,
-    prev_indent_spaces: Vec<usize>,
+    line_counter: LineNum,
+    prev_indent_spaces: Vec<Spaces>,
     pub add_tokens: AddTokens,
 }
 
 impl ParsingLines {
     pub fn new() -> ParsingLines {
         ParsingLines {
-            line_counter: 0,
+            line_counter: LineNum(0),
             prev_indent_spaces: Vec::new(),
             add_tokens: AddTokens::new(),
         }
     }
 
     pub fn add_opt_line(&mut self, line: &Option<LineInfo>) -> Result<&ParsingLines, Error> {
-        self.line_counter += 1;
+        self.line_counter.inc();
         match *line {
             None => Ok(self.add_token()),
             Some(ref l) => self.add_line_info(l),
@@ -43,6 +54,7 @@ impl ParsingLines {
 
         match self.prev_indent_spaces.last().cloned() {
             None => Ok(self.add_first_line(l)),
+
             Some(last_prev) => {
                 use std::cmp::Ordering::{Equal, Greater, Less};
                 match l.indent.cmp(&last_prev) {
@@ -88,8 +100,8 @@ impl ParsingLines {
         Ok(self)
     }
 
-    fn get_back_level_update_prevs(&mut self, spaces: usize) -> Result<usize, Error> {
-        fn get_error(line_counter: u32) -> Error {
+    fn get_back_level_update_prevs(&mut self, spaces: Spaces) -> Result<TokenLevel, Error> {
+        fn get_error(line_counter: LineNum) -> Error {
             Error {
                 line: line_counter,
                 desc: "invalid indentation".to_owned(),
@@ -103,7 +115,7 @@ impl ParsingLines {
             .ok_or(get_error(self.line_counter))?;
 
         match prev_spaces.cmp(&spaces) {
-            Equal => Ok(self.prev_indent_spaces.len() - 1),
+            Equal => Ok(TokenLevel(self.prev_indent_spaces.len() - 1)),
             Greater => {
                 self.prev_indent_spaces.pop();
                 self.get_back_level_update_prevs(spaces)
