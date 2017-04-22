@@ -7,8 +7,9 @@ use {Error, LineNum, TokenLevel, NSpaces, SLine};
 
 
 impl LineNum {
-    fn inc(&self) -> Self {
-        LineNum(self.0 + 1)
+    fn inc(&mut self) -> &Self {
+        self.0 += 1;
+        self
     }
 }
 

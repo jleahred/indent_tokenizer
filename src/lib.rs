@@ -63,3 +63,7 @@ impl SLine {
         SLine(String::from(s))
     }
 }
+
+
+#[cfg(test)]
+mod tests;

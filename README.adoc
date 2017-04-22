@@ -2,17 +2,24 @@
 
 A small an simple indentation tokenizer
 
+== Usage
 
-== TODO
+Add to `cargo.toml`
+[source, toml]
+----
+[dependencies]
+indent_tokenizer = "0.2.0"
+----
 
-* Update README
-    ** Versión 0.2 removed generic types
-* Documentation and doc tests
+See example below
+
 
 
 == Modifs
 
-0.2.0:: Removed generic types
+0.2.0:: Removed general types (as String, u32 or usize) +
+Using concrete types (new types)
+
 
 == Indentation format
 
@@ -270,6 +277,29 @@ separate tokens
 
 == Identation tokenizer API
 
+Version 0.2 removed general types as String, usize, u32...
+
+Instead, it's created an specific type on each context.
+
+
+Concrete types::
+[source, rust]
+----
+#[derive(Debug, PartialEq, Copy, Clone)]
+pub struct LineNum(u32);
+
+#[derive(Debug, PartialEq, Clone, Eq)]
+pub struct SLine(String);
+----
+
+* LineNum to represent the line number
+* SLine to respresent the line string
+
+Internally, the system uses more new types as NSpaces to represent number of spaces
+
+
+
+
 Function to call::
 [source, rust]
 ----
@@ -282,7 +312,7 @@ Token type::
 ----
 #[derive(Debug, PartialEq)]
 pub struct Token {
-    pub lines: Vec<String>,
+    pub lines: Vec<SLine>,
     pub tokens: Vec<Token>,
 }
 ----
@@ -293,7 +323,7 @@ Error type::
 ----
 #[derive(Debug, PartialEq)]
 pub struct Error {
-    pub line: u32,
+    pub line: LineNum,
     pub desc: String,
 }
 ----
@@ -302,12 +332,12 @@ pub struct Error {
 Thats all
 
 
-Look into lib.rs
+Look into lib.rs to see the api and tests.rs to se examples
 
 
 == Examples
 
-You can look into lib.rs, there are several tests.
+You can look into tests.rs, there are several tests.
 
 
 .Complex example
@@ -348,50 +378,50 @@ The result will be
 
 [source, rust]
 ----
-    vec![Token {
-                lines: vec!["0".to_owned()],
-                tokens: vec![Token {
-                                lines: vec!["| 01a".to_owned(),
-                                            "01b".to_owned(),
-                                            "01c".to_owned()],
-                                tokens: vec![],
-                            },
-                            Token {
-                                lines: vec!["02a".to_owned(), "02b".to_owned()],
-                                tokens: vec![Token {
-                                                lines: vec!["020a".to_owned(),
-                                                            "|020b".to_owned()],
-                                                tokens: vec![],
-                                            },
-                                            Token {
-                                                lines: vec!["  021a".to_owned(),
-                                                            "021b".to_owned()],
-                                                tokens: vec![],
-                                            }],
-                            }],
-            },
-            Token {
-                lines: vec!["1a".to_owned(), "1b".to_owned()],
-                tokens: vec![Token {
-                                lines: vec!["11a".to_owned(),
-                                            "|11b".to_owned(),
-                                            "11c".to_owned()],
-                                tokens: vec![],
-                            },
-                            Token {
-                                lines: vec!["12a  |".to_owned(), "12b  |".to_owned()],
-                                tokens: vec![],
-                            }],
-            },
-            Token {
-                lines: vec!["2a".to_owned()],
-                tokens: vec![Token {
-                                lines: vec!["21a".to_owned(),
-                                            "21b".to_owned(),
-                                            "".to_owned(),
-                                            "".to_owned()],
-                                tokens: vec![],
-                            }],
-            }];
+   vec![Token {
+            lines: vec![SLine::from("0")],
+            tokens: vec![Token {
+                            lines: vec![SLine::from("| 01a"),
+                                        SLine::from("01b"),
+                                        SLine::from("01c")],
+                            tokens: vec![],
+                        },
+                        Token {
+                            lines: vec![SLine::from("02a"), SLine::from("02b")],
+                            tokens: vec![Token {
+                                            lines: vec![SLine::from("020a"),
+                                                        SLine::from("|020b")],
+                                            tokens: vec![],
+                                        },
+                                        Token {
+                                            lines: vec![SLine::from("  021a"),
+                                                        SLine::from("021b")],
+                                            tokens: vec![],
+                                        }],
+                        }],
+        },
+        Token {
+            lines: vec![SLine::from("1a"), SLine::from("1b")],
+            tokens: vec![Token {
+                            lines: vec![SLine::from("11a"),
+                                        SLine::from("|11b"),
+                                        SLine::from("11c")],
+                            tokens: vec![],
+                        },
+                        Token {
+                            lines: vec![SLine::from("12a  |"), SLine::from("12b  |")],
+                            tokens: vec![],
+                        }],
+        },
+        Token {
+            lines: vec![SLine::from("2a")],
+            tokens: vec![Token {
+                            lines: vec![SLine::from("21a"),
+                                        SLine::from("21b"),
+                                        SLine::from(""),
+                                        SLine::from("")],
+                            tokens: vec![],
+                        }],
+        }];
 ----
 
