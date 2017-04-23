@@ -2,6 +2,12 @@
 
 A small an simple indentation tokenizer
 
+A similar project is https://github.com/jleahred/indentation_flattener[indentation_flattener]. 
+In this case we flatten the input adding PUSH_INDENT, and POP_INDENT.
+This looks better for PEG grammars.
+
+
+
 == Usage
 
 Add to `cargo.toml`
