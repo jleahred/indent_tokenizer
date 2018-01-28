@@ -5,6 +5,7 @@ mod parsing_lines;
 use parsing_lines::ParsingLines;
 use process_line::process_line;
 
+use std::ops::Deref;
 
 // ------------------------------------------------------------------
 // ------------------------------------------------------------------
@@ -63,6 +64,14 @@ impl SLine {
         SLine(String::from(s))
     }
 }
+
+impl Deref for SLine {
+    type Target = str;
+    fn deref(&self) -> &str {
+        &self.0
+    }
+}
+
 
 
 #[cfg(test)]
