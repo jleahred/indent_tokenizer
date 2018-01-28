@@ -11,11 +11,15 @@ use process_line::process_line;
 //  API
 
 #[derive(Debug, PartialEq, Copy, Clone)]
-pub struct LineNum(u32);
+pub struct LineNum(pub u32);
 
 #[derive(Debug, PartialEq, Clone, Eq)]
-pub struct SLine(String);
-
+pub struct SLine(pub String);
+impl std::fmt::Display for SLine {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> Result<(), std::fmt::Error> {
+        write!(f, "{}", self)
+    }
+}
 
 
 #[derive(Debug, PartialEq)]
@@ -37,8 +41,7 @@ pub fn tokenize(input: &str) -> Result<Vec<Token>, Error> {
         parsing_lines.add_opt_line(&process_line(&SLine::from(l)))?;
     }
 
-    Ok(parsing_lines.add_tokens
-        .get_tokens_and_close())
+    Ok(parsing_lines.add_tokens.get_tokens_and_close())
 }
 
 //  API
