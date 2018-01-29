@@ -1,6 +1,6 @@
 [package]
 name = "indent_tokenizer"
-version = "0.2.0"
+version = "0.4.0"
 authors = ["jlesteban <jlesteban>"]
 license = "GPL-3.0"
 description = "Generate tokens based on indentation"
